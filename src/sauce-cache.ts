@@ -18,7 +18,7 @@ export class SauceCache {
 
   public async exists(sauceInfo: SauceInfo) {
     return new Promise<boolean>(resolve => {
-      this.client.get(this.getKey(sauceInfo), (x, y) => {
+      this.client.get(this.getKey(sauceInfo), (_, y) => {
         console.log(y != null ? `[SauceCache] found sauce in cache` : `[SauceCache] first time sauce was detected`)
         resolve(y != null);
       });
