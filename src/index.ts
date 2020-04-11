@@ -7,6 +7,8 @@ import { SauceCache } from './sauce-cache';
 export = (app: Application) => {
   app.on('pull_request', async (context) => handlePr(context));
 }
+const sauceCache = new SauceCache();
+sauceCache.exists({} as any);
 
 async function handlePr(context: Context) {
   console.log('Received PR event.');

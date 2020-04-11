@@ -1,8 +1,9 @@
-import { RedisClient } from 'redis';
+import redis, { RedisClient } from 'redis';
 
 export class SauceCache {
   private get client(): RedisClient {
-    return new RedisClient({
+    console.log(`Connecting to redis using ${process.env.REDIS_URL}`);
+    return redis.createClient({
       url: process.env.REDIS_URL
     });
   }
