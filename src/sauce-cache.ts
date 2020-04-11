@@ -2,7 +2,7 @@ import redis, { RedisClient } from 'redis';
 
 export class SauceCache {
   private get client(): RedisClient {
-    console.log(`Connecting to redis using ${process.env.REDIS_URL}`);
+    this.log(`Connecting to redis using ${process.env.REDIS_URL}`);
     return redis.createClient({
       url: process.env.REDIS_URL
     });
@@ -20,7 +20,7 @@ export class SauceCache {
   public async exists(sauceInfo: SauceInfo) {
     return new Promise<boolean>(resolve => {
       this.client.get(this.getKey(sauceInfo), (_, y) => {
-        console.log(y != null ? `[SauceCache] found sauce in cache` : `[SauceCache] first time sauce was detected`)
+        this.log(y != null ? `[SauceCache] found sauce in cache, marked as: '${y}'` : `[SauceCache] first time sauce was detected`)
         resolve(y != null);
       });
     });
@@ -28,6 +28,10 @@ export class SauceCache {
 
   private getKey(sauceInfo: SauceInfo) {
     return JSON.stringify(sauceInfo);
+  }
+
+  private log(msg: string) {
+    console.log(`[SauceCache] ${msg}`);
   }
 }
 

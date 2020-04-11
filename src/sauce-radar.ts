@@ -7,22 +7,22 @@ export class SauceRadar {
   constructor(private api: GitHubAPI, private diffParser: DiffParser, private sauceCache: SauceCache) { }
 
   public async detectSauce(pr: PrInfo, rule: SauceRule[]) {
-    console.log('Detecting sauce...');
+    this.log('Detecting sauce...');
 
     const diff = this.diffParser.parse(pr.diff);
-    console.log(`The diff has ${diff.length} files in it!`);
+    this.log(`The diff has ${diff.length} files in it!`);
 
     const postComment = this.commentFunc(pr);
 
     for (const file of diff) {
       const applicableRules = rule.filter(x => x.fileNamePattern.test(file.newPath));
-      console.log(`Inspecting file ${file.newPath}, for which ${applicableRules.length} rules are applicable`);
+      this.log(`Inspecting file ${file.newPath}, for which ${applicableRules.length} rules are applicable`);
 
       for (const hunk of file.hunks) {
-        console.log(`Inspecting hunk with ${hunk.changes} changes: ${hunk.content}`);
+        this.log(`Inspecting hunk with ${hunk.changes} changes: ${hunk.content}`);
 
         for (const change of hunk.changes.filter(x => x.type === 'insert')) {
-          console.log(`Inspecting change: ${change.content}`);
+          this.log(`Inspecting change: ${change.content}`);
 
           for (const rule of applicableRules) {
             const matches = change.content.match(rule.rulePattern);
@@ -33,7 +33,7 @@ export class SauceRadar {
               comment = comment.split(`{${i - 1}}`).join(matches[i]);
             }
 
-            console.log(`Sauce found! ${comment}`);
+            this.log(`Sauce found! ${comment}`);
             await postComment(comment, file.newPath, (change.newLineNumber || change.lineNumber) as number);
           }
         }
@@ -54,6 +54,7 @@ export class SauceRadar {
 
       if (this.sauceCache.exists(sauceInfo)) return;
 
+      this.log('Commenting...');
       await this.api.pulls.createComment({
         pull_number: pr.prNumber,
         owner: pr.owner,
@@ -66,6 +67,10 @@ export class SauceRadar {
 
       await this.sauceCache.cache(sauceInfo);
     }
+  }
+
+  private log(msg: string) {
+    console.log(`[SauceRadar] ${msg}`);
   }
 }
 

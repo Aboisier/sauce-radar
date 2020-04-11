@@ -4,14 +4,15 @@ import { rules } from './rules';
 import { SauceRadar } from './sauce-radar';
 import { SauceCache } from './sauce-cache';
 
+log('Just booting, hooking things up');
+
 export = (app: Application) => {
   app.on('pull_request', async (context) => handlePr(context));
 }
-const sauceCache = new SauceCache();
-sauceCache.exists({} as any);
+
 
 async function handlePr(context: Context) {
-  console.log('Received PR event.');
+  log('Received PR event');
 
   const pr = context.payload.pull_request;
 
@@ -37,3 +38,7 @@ async function handlePr(context: Context) {
   }, rules);
 }
 
+
+function log(msg: string) {
+  console.log(`[Index] ${msg}`);
+}
