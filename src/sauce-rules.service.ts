@@ -16,6 +16,7 @@ export class SauceRulesService {
         }
 
         resolve((result as any[]).map(x => this.toEntity(x)));
+        client.destroy();
       });
     })
   }

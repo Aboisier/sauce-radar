@@ -2,7 +2,7 @@ import { Application, Context } from 'probot';
 import { DiffParser } from './diff-parser';
 import { SauceCache } from './sauce-cache';
 import { SauceRadar } from './sauce-radar';
-import { SauceRulesService } from './sauce-rules';
+import { SauceRulesService } from './sauce-rules.service';
 
 log('Just booting, hooking things up');
 

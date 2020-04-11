@@ -1,7 +1,7 @@
 import { GitHubAPI } from 'probot';
 import { DiffParser } from './diff-parser';
 import { SauceCache, SauceInfo } from './sauce-cache';
-import { SauceRulesService } from './sauce-rules';
+import { SauceRulesService } from './sauce-rules.service';
 
 export class SauceRadar {
   constructor(private api: GitHubAPI, private diffParser: DiffParser, private sauceCache: SauceCache, private sauceRulesService: SauceRulesService) { }
