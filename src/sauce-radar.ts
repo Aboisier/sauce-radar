@@ -1,13 +1,14 @@
 import { GitHubAPI } from 'probot';
 import { DiffParser } from './diff-parser';
-import { SauceRule } from './sauce-rule';
 import { SauceCache, SauceInfo } from './sauce-cache';
+import { SauceRulesService } from './sauce-rules';
 
 export class SauceRadar {
-  constructor(private api: GitHubAPI, private diffParser: DiffParser, private sauceCache: SauceCache) { }
+  constructor(private api: GitHubAPI, private diffParser: DiffParser, private sauceCache: SauceCache, private sauceRulesService: SauceRulesService) { }
 
-  public async detectSauce(pr: PrInfo, rule: SauceRule[]) {
+  public async detectSauce(pr: PrInfo) {
     this.log('Detecting sauce...');
+    const rules = await this.sauceRulesService.getRules(pr.owner, pr.repo); 
 
     const diff = this.diffParser.parse(pr.diff);
     this.log(`The diff has ${diff.length} files in it!`);
@@ -15,7 +16,7 @@ export class SauceRadar {
     const postComment = this.commentFunc(pr);
 
     for (const file of diff) {
-      const applicableRules = rule.filter(x => x.fileNamePattern.test(file.newPath));
+      const applicableRules = rules.filter(x => x.fileNamePattern.test(file.newPath));
       this.log(`Inspecting file ${file.newPath}, for which ${applicableRules.length} rules are applicable`);
 
       for (const hunk of file.hunks) {

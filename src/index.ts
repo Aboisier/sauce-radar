@@ -1,15 +1,14 @@
 import { Application, Context } from 'probot';
 import { DiffParser } from './diff-parser';
-import { rules } from './rules';
-import { SauceRadar } from './sauce-radar';
 import { SauceCache } from './sauce-cache';
+import { SauceRadar } from './sauce-radar';
+import { SauceRulesService } from './sauce-rules';
 
 log('Just booting, hooking things up');
 
-export = (app: Application) => {
+export = async (app: Application) => {
   app.on('pull_request', async (context) => handlePr(context));
 }
-
 
 async function handlePr(context: Context) {
   log('Received PR event');
@@ -27,7 +26,8 @@ async function handlePr(context: Context) {
 
   const diffParser = new DiffParser();
   const sauceCache = new SauceCache();
-  const sauceRadar = new SauceRadar(context.github, diffParser, sauceCache);
+  const sauceRulesServices = new SauceRulesService();
+  const sauceRadar = new SauceRadar(context.github, diffParser, sauceCache, sauceRulesServices);
   sauceRadar.detectSauce({
     prNumber: pr.number,
     owner: context.issue().owner,
@@ -35,7 +35,7 @@ async function handlePr(context: Context) {
     base: pr.base.ref,
     commitId: pr.head.sha,
     diff: diff.data,
-  }, rules);
+  });
 }
 
 
