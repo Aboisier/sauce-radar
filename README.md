@@ -1,5 +1,6 @@
-# sauce-radar
+# Sauce radar
 
+![Suace radar](./quicklogo.png "Sauce radar")
 > A GitHub App built with [Probot](https://github.com/probot/probot) that A bot that detects sauce.
 
 ## Setup
