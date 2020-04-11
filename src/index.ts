@@ -1,13 +1,35 @@
-import { Application } from 'probot' // eslint-disable-line no-unused-vars
+import { Application, Context } from 'probot';
+import { DiffParser } from './diff-parser';
+import { rules } from './rules';
+import { SauceRadar } from './sauce-radar';
 
 export = (app: Application) => {
-  app.on('issues.opened', async (context) => {
-    const issueComment = context.issue({ body: 'Thanks for opening this issue!' })
-    await context.github.issues.createComment(issueComment)
-  })
-  // For more information on building apps:
-  // https://probot.github.io/docs/
-
-  // To get your app running against GitHub, see:
-  // https://probot.github.io/docs/development/
+  app.on('pull_request', async (context) => handlePr(context));
 }
+
+async function handlePr(context: Context) {
+  console.log('Received PR event.');
+
+  const pr = context.payload.pull_request;
+
+  // Get the diff
+  const diff = await context.github.pulls.get({
+    pull_number: pr.number,
+    owner: context.issue().owner,
+    repo: context.issue().repo,
+    mediaType: { format: "diff" }
+  }) as any;
+
+
+  const diffParser = new DiffParser();
+  const sauceRadar = new SauceRadar(context.github, diffParser);
+  sauceRadar.detectSauce({
+    prNumber: pr.number,
+    owner: context.issue().owner,
+    repo: context.issue().repo,
+    base: pr.base.ref,
+    commitId: pr.head.sha,
+    diff: diff.data,
+  }, rules);
+}
+

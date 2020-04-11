@@ -16,11 +16,9 @@ npm run build
 npm run start
 ```
 
-## Contributing
+## Deploying from scratch
 
-If you have suggestions for how sauce-radar could be improved, or want to report a bug, open an issue! We'd love all and any contributions.
-
-For more, check out the [Contributing Guide](CONTRIBUTING.md).
+https://probot.github.io/docs/deployment/#deploy-the-app
 
 ## License
 
