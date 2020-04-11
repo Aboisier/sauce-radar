@@ -1,9 +1,10 @@
 import { GitHubAPI } from 'probot';
-import { DiffParser } from "./diff-parser";
+import { DiffParser } from './diff-parser';
 import { SauceRule } from './sauce-rule';
+import { SauceCache, SauceInfo } from './sauce-cache';
 
 export class SauceRadar {
-  constructor(private api: GitHubAPI, private diffParser: DiffParser) { }
+  constructor(private api: GitHubAPI, private diffParser: DiffParser, private sauceCache: SauceCache) { }
 
   public async detectSauce(pr: PrInfo, rule: SauceRule[]) {
     console.log('Detecting sauce...');
@@ -28,10 +29,10 @@ export class SauceRadar {
             if (matches == null) continue;
 
             let comment = rule.comment.slice();
-            for(let i = 1; i < matches.length; ++i) {
-              comment = comment.split(`{${i-1}}`).join(matches[i]);
+            for (let i = 1; i < matches.length; ++i) {
+              comment = comment.split(`{${i - 1}}`).join(matches[i]);
             }
-            
+
             console.log(`Sauce found! ${comment}`);
             await postComment(comment, file.newPath, (change.newLineNumber || change.lineNumber) as number);
           }
@@ -42,6 +43,17 @@ export class SauceRadar {
 
   private commentFunc(pr: PrInfo) {
     return async (comment: string, path: string, line: number) => {
+      const sauceInfo: SauceInfo = {
+        comment,
+        owner: pr.owner,
+        prNumber: pr.prNumber,
+        repo: pr.repo,
+        path,
+        line
+      };
+
+      if (this.sauceCache.exists(sauceInfo)) return;
+
       await this.api.pulls.createComment({
         pull_number: pr.prNumber,
         owner: pr.owner,
@@ -51,6 +63,8 @@ export class SauceRadar {
         commit_id: pr.commitId,
         line
       });
+
+      await this.sauceCache.cache(sauceInfo);
     }
   }
 }
