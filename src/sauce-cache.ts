@@ -1,28 +1,41 @@
 import redis, { RedisClient } from 'redis';
 
 export class SauceCache {
-  private get client(): RedisClient {
-    this.log(`Connecting to redis using ${process.env.REDIS_URL}`);
-    return redis.createClient({
-      url: process.env.REDIS_URL
-    });
-  }
 
   public async cache(sauceInfo: SauceInfo) {
     const key = this.getKey(sauceInfo);
-    await new Promise(r => this.client.set(key, 'commented', () => r()));
+    const client = this.getClient();
 
-    // 14 days
-    const ttl = +(process.env.COMMENT_TTL || 60 * 60 * 24 * 14);
-    await new Promise(r => this.client.expire(key, ttl, () => r()));
+    try {
+
+      await new Promise(r => client.set(key, 'commented', () => r()));
+
+      // 14 days
+      const ttl = +(process.env.COMMENT_TTL || 60 * 60 * 24 * 14);
+      await new Promise(r => client.expire(key, ttl, () => r()));
+    } finally {
+      client.quit();
+    }
   }
 
   public async exists(sauceInfo: SauceInfo) {
+    const client = this.getClient();
     return new Promise<boolean>(resolve => {
-      this.client.get(this.getKey(sauceInfo), (_, y) => {
-        this.log(y != null ? `Found sauce in cache, marked as: '${y}'` : `First time sauce was detected`)
-        resolve(y != null);
-      });
+      try {
+        client.get(this.getKey(sauceInfo), (_, y) => {
+          this.log(y != null ? `Found sauce in cache, marked as: '${y}'` : `First time sauce was detected`)
+          resolve(y != null);
+        });
+      } finally {
+        client.quit();
+      }
+    });
+  }
+
+  private getClient(): RedisClient {
+    this.log(`Connecting to redis using ${process.env.REDIS_URL}`);
+    return redis.createClient({
+      url: process.env.REDIS_URL
     });
   }
 
