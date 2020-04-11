@@ -52,7 +52,7 @@ export class SauceRadar {
         line
       };
 
-      if (this.sauceCache.exists(sauceInfo)) return;
+      if (await this.sauceCache.exists(sauceInfo)) return;
 
       this.log('Commenting...');
       await this.api.pulls.createComment({

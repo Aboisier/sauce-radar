@@ -20,7 +20,7 @@ export class SauceCache {
   public async exists(sauceInfo: SauceInfo) {
     return new Promise<boolean>(resolve => {
       this.client.get(this.getKey(sauceInfo), (_, y) => {
-        this.log(y != null ? `[SauceCache] found sauce in cache, marked as: '${y}'` : `[SauceCache] first time sauce was detected`)
+        this.log(y != null ? `Found sauce in cache, marked as: '${y}'` : `First time sauce was detected`)
         resolve(y != null);
       });
     });
