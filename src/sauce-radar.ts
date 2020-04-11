@@ -8,7 +8,7 @@ export class SauceRadar {
 
   public async detectSauce(pr: PrInfo) {
     this.log('Detecting sauce...');
-    const rules = await this.sauceRulesService.getRules(pr.owner, pr.repo); 
+    const rules = (await this.sauceRulesService.getRules(pr.owner, pr.repo)).filter(x => x.targetBranches.test(pr.base)); 
 
     const diff = this.diffParser.parse(pr.diff);
     this.log(`The diff has ${diff.length} files in it!`);
