@@ -18,7 +18,7 @@ export class FileSauceRulesService implements SauceRulesService {
 
     const rules: SauceRule[] = [];
     try {
-      const content = yaml.parse(Base64.decode(configFileResponse.data.content)));
+      const content = yaml.parse(Base64.decode(configFileResponse.data.content));
       let id = 0;
       for (const key in content) {
         rules.push(this.toEntity(content[key], ++id, owner, repo))
@@ -37,9 +37,9 @@ export class FileSauceRulesService implements SauceRulesService {
       id: id,
       owner,
       repo,
-      targetBranches: new RegExp(data.targetBranches),
-      fileNamePattern: new RegExp(data.fileNamePattern),
-      rulePattern: new RegExp(data.rulePattern),
+      targetBranches: new RegExp(data.branches[0]),
+      fileNamePattern: new RegExp(data.files),
+      rulePattern: new RegExp(data.rule),
       comment: data.comment
     };
   }
