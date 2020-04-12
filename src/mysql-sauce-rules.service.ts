@@ -29,8 +29,8 @@ export class MysqlSauceRulesService implements SauceRulesService {
       id: +data.id,
       owner: data.owner,
       repo: data.repo,
-      targetBranches: new RegExp(data.targetBranches),
-      fileNamePattern: new RegExp(data.fileNamePattern),
+      branches: [new RegExp(data.targetBranches)],
+      files: [new RegExp(data.fileNamePattern)],
       rulePattern: new RegExp(data.rulePattern),
       comment: data.comment
     };
