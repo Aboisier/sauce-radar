@@ -24,13 +24,15 @@
     "js-base64": "^2.5.2",
     "mysql": "^2.18.1",
     "probot": "^9.5.3",
-    "redis": "^3.0.2"
+    "redis": "^3.0.2",
+    "yaml": "^1.8.3"
   },
   "devDependencies": {
     "@types/js-base64": "^2.3.1",
     "@types/mysql": "^2.15.9",
     "@types/node": "^13.1.0",
     "@types/redis": "^2.8.17",
+    "@types/yaml": "^1.2.0",
     "@typescript-eslint/parser": "^2.4.0",
     "eslint-plugin-typescript": "^0.14.0",
     "nodemon": "^2.0.0",
