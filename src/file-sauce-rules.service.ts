@@ -33,12 +33,14 @@ export class FileSauceRulesService implements SauceRulesService {
   }
 
   private toEntity(data: any, id: number, owner: string, repo: string): SauceRule {
+    const targetBranches = typeof data.branches == 'object' ? data.branches.map((x: string) => new RegExp(x)) : [new RegExp(data.branches)];
+    const fileNamePattern = typeof data.files == 'object' ? data.files.map((x: string) => new RegExp(x)) : [new RegExp(data.files)];
     return {
       id: id,
       owner,
       repo,
-      targetBranches: new RegExp(data.branches[0]),
-      fileNamePattern: new RegExp(data.files),
+      branches: targetBranches,
+      files: fileNamePattern,
       rulePattern: new RegExp(data.rule),
       comment: data.comment
     };

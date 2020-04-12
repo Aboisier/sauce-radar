@@ -2,8 +2,8 @@ export interface SauceRule {
   id: number,
   owner: string,
   repo: string,
-  fileNamePattern: RegExp;
+  files: RegExp[];
   rulePattern: RegExp;
-  targetBranches: RegExp;
+  branches: RegExp[];
   comment: string;
 }

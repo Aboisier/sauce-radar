@@ -15,7 +15,7 @@ export class SauceRadar {
 
   public async detectSauce(pr: PrInfo) {
     this.log('Detecting sauce...');
-    const rules = (await this.sauceRulesService.getRules(pr.owner, pr.repo)).filter(x => x.targetBranches.test(pr.base));
+    const rules = (await this.sauceRulesService.getRules(pr.owner, pr.repo)).filter(x => x.branches.some(y => y.test(pr.base)));
 
     const diff = this.diffParser.parse(pr.diff);
     this.log(`The diff has ${diff.length} files in it!`);
@@ -23,7 +23,7 @@ export class SauceRadar {
     const postComment = this.commentFunc(pr);
 
     for (const file of diff) {
-      const applicableRules = rules.filter(x => x.fileNamePattern.test(file.newPath));
+      const applicableRules = rules.filter(x => x.files.some(y => y.test(file.newPath)));
       this.log(`Inspecting file ${file.newPath}, for which ${applicableRules.length} rules are applicable`);
 
       for (const hunk of file.hunks) {
