@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="./style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans&family=Pacifico&family=Roboto:wght@200&display=swap"
+    rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/styles/default.min.css">
+  <script src="//cdn.jsdelivr.net/gh/highlightjs/cdn-release@9.18.1/build/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+</head>
+
+
+<body>
+  <header>
+    <img class="logo" src="./logo.png" />
+    Sauce radar
+  </header>
+
+
+  <div class="content">
+    <h1>I'm sorry what</h1>
+
+    <p>
+      Got tired of commenting the same stuff on pull requests, so I made this. It finds stuff in PRs using regular
+      expressions.
+      I know, it's pretty limited, but it makes it language agnostic, so that's that, still pretty cool. Sauce radar.
+    </p>
+
+    <h1>Setup</h1>
+
+    <p>
+      First of all, <a href="https://github.com/apps/sauce-radar/installations/new">install the app</a>.
+    </p>
+
+    <p>
+      Then, create a config file named <code>sauceradar.yml</code> in the <code>.github</code> directory of your repo.
+      <pre class="language-yaml"><code>  # List of regexes. The rule will be applied to files matching one of these regexes.
+- files: 
+  - .*\.js
+
+  # List of regexes. The rule will be applied for PRs whose target branches match one of these regexes
+  branches: 
+  - develop
+  - feature\/*
+  
+  # Regex sauce radare uses to detect sauce. The rule is tested per-line
+  rule: function ([^\s(]*)
+
+  # Multiline or single-line comment that the app will comment if the rule matches
+  # You can use capture groups from the rule, e.g. Wow, {0} is a great function name!
+  comment: Woo
+</code>
+</pre>
+    </p>
+
+    <h1>Final words</h1>
+    <p>
+      Well that's pretty much it. From now on, every time a PR is created or updated on your repository, the sauce radar will 
+      test the changes against the rules and post comments whenever a rule matches.
+    </p>
+  </div>
+
+  <footer>
+    Cooked by <a href="https://github.com/Aboisier">Antoine Boisier-Michaud</a> | View the code on <a href="https://github.com/Aboisier/sauce-radar">GitHub</a>
+  </footer>
+</body>
+
+</html>

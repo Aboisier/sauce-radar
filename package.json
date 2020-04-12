@@ -13,13 +13,19 @@
     "github-bot"
   ],
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc && (tsc -w --preserveWatchOutput & nodemon)",
+    "build": "npm run build:lib && npm run build:website",
+    "build:watch": "concurrently -k \"npm run build:website:watch\" \"npm run build:lib:watch\"",
+    "build:lib": "tsc",
+    "build:lib:watch": "tsc && (tsc -w --preserveWatchOutput & nodemon)",
+    "build:website": "copyfiles public/* lib",
+    "build:website:watch": "watch \"npm run build:website\" ./public",
     "dev": "npm run build:watch",
     "start": "probot run ./lib/index.js",
+    "start:watch": "concurrently -k \"npm run build:watch\" \"npm run start\"",
     "test": "testyts"
   },
   "dependencies": {
+    "copyfiles": "^2.2.0",
     "gitdiff-parser": "^0.2.2",
     "js-base64": "^2.5.2",
     "mysql": "^2.18.1",
@@ -34,11 +40,13 @@
     "@types/redis": "^2.8.17",
     "@types/yaml": "^1.2.0",
     "@typescript-eslint/parser": "^2.4.0",
+    "concurrently": "^5.1.0",
     "eslint-plugin-typescript": "^0.14.0",
     "nodemon": "^2.0.0",
     "smee-client": "^1.1.0",
     "testyts": "^0.9.0",
-    "typescript": "^3.6.4"
+    "typescript": "^3.6.4",
+    "watch": "^1.0.2"
   },
   "engines": {
     "node": ">= 8.3.0"

@@ -8,6 +8,8 @@ log('Just booting, hooking things up');
 
 export = async (app: Application) => {
   app.on('pull_request', async (context) => handlePr(context));
+  const router = app.route('/home');
+  router.use(require('express').static(__dirname + '/public'));
 }
 
 async function handlePr(context: Context) {
