@@ -1,14 +1,21 @@
 import { GitHubAPI } from 'probot';
+import { LoggerWithTarget } from 'probot/lib/wrap-logger';
 import { DiffParser } from './diff-parser';
 import { SauceCache, SauceInfo } from './sauce-cache';
 import { SauceRulesService } from './sauce-rules.service';
 
 export class SauceRadar {
-  constructor(private api: GitHubAPI, private diffParser: DiffParser, private sauceCache: SauceCache, private sauceRulesService: SauceRulesService) { }
+  constructor(
+    private api: GitHubAPI,
+    private diffParser: DiffParser,
+    private sauceCache: SauceCache,
+    private sauceRulesService: SauceRulesService,
+    private log: LoggerWithTarget
+  ) { }
 
   public async detectSauce(pr: PrInfo) {
     this.log('Detecting sauce...');
-    const rules = (await this.sauceRulesService.getRules(pr.owner, pr.repo)).filter(x => x.targetBranches.test(pr.base)); 
+    const rules = (await this.sauceRulesService.getRules(pr.owner, pr.repo)).filter(x => x.targetBranches.test(pr.base));
 
     const diff = this.diffParser.parse(pr.diff);
     this.log(`The diff has ${diff.length} files in it!`);
@@ -68,10 +75,6 @@ export class SauceRadar {
 
       await this.sauceCache.cache(sauceInfo);
     }
-  }
-
-  private log(msg: string) {
-    console.log(`[SauceRadar] ${msg}`);
   }
 }
 

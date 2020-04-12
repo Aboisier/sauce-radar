@@ -1,8 +1,8 @@
 import { Application, Context } from 'probot';
 import { DiffParser } from './diff-parser';
+import { FileSauceRulesService } from './file-sauce-rules.service';
 import { SauceCache } from './sauce-cache';
 import { SauceRadar } from './sauce-radar';
-import { SauceRulesService } from './sauce-rules.service';
 
 log('Just booting, hooking things up');
 
@@ -25,9 +25,9 @@ async function handlePr(context: Context) {
 
 
   const diffParser = new DiffParser();
-  const sauceCache = new SauceCache();
-  const sauceRulesServices = new SauceRulesService();
-  const sauceRadar = new SauceRadar(context.github, diffParser, sauceCache, sauceRulesServices);
+  const sauceCache = new SauceCache(context.log);
+  const sauceRulesServices = new FileSauceRulesService(context.github, context.log);
+  const sauceRadar = new SauceRadar(context.github, diffParser, sauceCache, sauceRulesServices, context.log);
   sauceRadar.detectSauce({
     prNumber: pr.number,
     owner: context.issue().owner,

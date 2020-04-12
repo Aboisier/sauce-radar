@@ -1,6 +1,8 @@
 import redis, { RedisClient } from 'redis';
+import { LoggerWithTarget } from 'probot/lib/wrap-logger';
 
 export class SauceCache {
+  constructor(private log: LoggerWithTarget) { }
 
   public async cache(sauceInfo: SauceInfo) {
     const key = this.getKey(sauceInfo);
@@ -41,10 +43,6 @@ export class SauceCache {
 
   private getKey(sauceInfo: SauceInfo) {
     return JSON.stringify(sauceInfo);
-  }
-
-  private log(msg: string) {
-    console.log(`[SauceCache] ${msg}`);
   }
 }
 
