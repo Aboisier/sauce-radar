@@ -15,10 +15,30 @@ export class FileSauceRulesService implements SauceRulesService {
       path: '.github/sauce-radar.json'
     }) as any;
 
-    const content = Base64.decode(configFileResponse.data.content);
+    const rules: SauceRule[] = [];
+    try {
+      const content = JSON.parse(Base64.decode(configFileResponse.data.content));
+      for (const key in content) {
+        rules.push(this.toEntity(content[key]))
+      }
+      this.log(`Found ${rules.length} keys in .github/sauce-radar.json for ${owner}/${repo}.`);
+    } catch (err) {
+      this.log.error('Could not parse config file', err)
+    }
 
-    this.log(content);
 
-    return [];
+    return rules;
+  }
+
+  private toEntity(data: any): SauceRule {
+    return {
+      id: +data.id,
+      owner: data.owner,
+      repo: data.repo,
+      targetBranches: new RegExp(data.targetBranches),
+      fileNamePattern: new RegExp(data.fileNamePattern),
+      rulePattern: new RegExp(data.rulePattern),
+      comment: data.comment
+    };
   }
 }
