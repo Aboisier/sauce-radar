@@ -2,6 +2,7 @@ import { GitHubAPI } from 'probot';
 import { LoggerWithTarget } from 'probot/lib/wrap-logger';
 import { SauceRule } from './models/sauce-rule';
 import { SauceRulesService } from './sauce-rules.service';
+import { Base64 } from 'js-base64';
 
 export class FileSauceRulesService implements SauceRulesService {
 
@@ -12,9 +13,11 @@ export class FileSauceRulesService implements SauceRulesService {
       owner,
       repo,
       path: '.github/sauce-radar.json'
-    });
+    }) as any;
 
-    this.log(JSON.stringify(configFileResponse.data));
+    const content = Base64.decode(configFileResponse.data.content);
+
+    this.log(content);
 
     return [];
   }
