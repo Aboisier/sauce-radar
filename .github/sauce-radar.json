@@ -1,0 +1,10 @@
+{
+  "noClick": {
+    "owner": "Aboisier",
+    "repo": "testing-1-2",
+    "fileNamePattern": ".*\\.html",
+    "rulePattern": "\\(click\\)=\"([^()]*).*",
+    "targetBranches": "develop",
+    "comment": "On dirait que t'as utilisé un good ol' `(click)`. Faudrait-il plutôt utiliser un `gretaDebouncedClick`?\nLe template devrait ressembler à ça:\n```html\n[gretaDebouncedClick]=\"{0}\"\n```\n\nIl faut aussi transformer le .ts pour garder le contexte de la fonction.\n```ts\npublic {0} = (...) => {\n  ...\n}\n```"
+  }
+}
