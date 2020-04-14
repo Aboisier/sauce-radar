@@ -12,7 +12,7 @@
     "declaration": true,
     "sourceMap": true,
     "outDir": "./lib",
-    "strict": true ,
+    "strict": false,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
@@ -22,8 +22,14 @@
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
     "pretty": false,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "typeRoots": [
+      "./node_modules/@types"
+    ]
   },
-  "include": ["src/"],
+  "include": [
+    "src/"
+  ],
   "compileOnSave": false
 }

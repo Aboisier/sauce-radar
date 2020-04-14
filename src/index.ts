@@ -1,13 +1,14 @@
 import { Application, Context } from 'probot';
-import { DiffParser } from './diff-parser';
-import { FileSauceRulesService } from './file-sauce-rules.service';
-import { SauceCache } from './sauce-cache';
-import { SauceRadar } from './sauce-radar';
+import { DiffParser } from './services/diff-parser/diff-parser.service';
+import { FileRulesService } from './services/rules/file-rules.service';
+import { CommentsCacheService } from './services/comments-cache/comments-cache.service';
+import { SauceRadar } from './services/sauce-radar/sauce-radar.service';
 
 log('Just booting, hooking things up');
 
 export = async (app: Application) => {
-  app.on('pull_request', async (context) => handlePr(context));
+  app.on('pull_request.opened', async (context) => handlePr(context));
+  app.on('pull_request.reopened', async (context) => handlePr(context));
   const router = app.route('/home');
   router.use(require('express').static(__dirname + '/public'));
 }
@@ -27,8 +28,8 @@ async function handlePr(context: Context) {
 
 
   const diffParser = new DiffParser();
-  const sauceCache = new SauceCache(context.log);
-  const sauceRulesServices = new FileSauceRulesService(context.github, context.log);
+  const sauceCache = new CommentsCacheService(context.log);
+  const sauceRulesServices = new FileRulesService(context.github, context.log);
   const sauceRadar = new SauceRadar(context.github, diffParser, sauceCache, sauceRulesServices, context.log);
   sauceRadar.detectSauce({
     prNumber: pr.number,

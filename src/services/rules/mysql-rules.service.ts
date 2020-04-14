@@ -1,9 +1,9 @@
 import mysql from 'mysql';
 import { LoggerWithTarget } from 'probot/lib/wrap-logger';
-import { SauceRule } from './models/sauce-rule';
-import { SauceRulesService } from './sauce-rules.service';
+import { SauceRule } from '../../models/sauce-rule';
+import { SauceRulesService } from './rules.service';
 
-export class MysqlSauceRulesService implements SauceRulesService {
+export class MysqlRulesService implements SauceRulesService {
   constructor(private log: LoggerWithTarget) { }
 
   public async getRules(owner: string, repo: string): Promise<SauceRule[]> {
@@ -31,7 +31,7 @@ export class MysqlSauceRulesService implements SauceRulesService {
       repo: data.repo,
       branches: [new RegExp(data.targetBranches)],
       files: [new RegExp(data.fileNamePattern)],
-      rulePattern: new RegExp(data.rulePattern),
+      rule: new RegExp(data.rulePattern),
       comment: data.comment
     };
   }

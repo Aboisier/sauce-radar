@@ -1,7 +1,7 @@
 import redis, { RedisClient } from 'redis';
 import { LoggerWithTarget } from 'probot/lib/wrap-logger';
 
-export class SauceCache {
+export class CommentsCacheService {
   constructor(private log: LoggerWithTarget) { }
 
   public async cache(sauceInfo: SauceInfo) {

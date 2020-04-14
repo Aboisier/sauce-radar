@@ -1,14 +1,14 @@
 import { GitHubAPI } from 'probot';
 import { LoggerWithTarget } from 'probot/lib/wrap-logger';
-import { DiffParser } from './diff-parser';
-import { SauceCache, SauceInfo } from './sauce-cache';
-import { SauceRulesService } from './sauce-rules.service';
+import { DiffParser } from '../diff-parser/diff-parser.service';
+import { CommentsCacheService, SauceInfo } from '../comments-cache/comments-cache.service';
+import { SauceRulesService } from '../rules/rules.service';
 
 export class SauceRadar {
   constructor(
     private api: GitHubAPI,
     private diffParser: DiffParser,
-    private sauceCache: SauceCache,
+    private sauceCache: CommentsCacheService,
     private sauceRulesService: SauceRulesService,
     private log: LoggerWithTarget
   ) { }
@@ -33,7 +33,7 @@ export class SauceRadar {
           this.log(`Inspecting change: ${change.content}`);
 
           for (const rule of applicableRules) {
-            const matches = change.content.match(rule.rulePattern);
+            const matches = change.content.match(rule.rule);
             if (matches == null) continue;
 
             let comment = rule.comment.slice();

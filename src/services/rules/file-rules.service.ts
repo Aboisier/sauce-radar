@@ -1,11 +1,11 @@
 import { GitHubAPI } from 'probot';
 import { LoggerWithTarget } from 'probot/lib/wrap-logger';
-import { SauceRule } from './models/sauce-rule';
-import { SauceRulesService } from './sauce-rules.service';
+import { SauceRule } from '../../models/sauce-rule';
+import { SauceRulesService } from './rules.service';
 import { Base64 } from 'js-base64';
 import * as yaml from 'yaml';
 
-export class FileSauceRulesService implements SauceRulesService {
+export class FileRulesService implements SauceRulesService {
 
   constructor(private api: GitHubAPI, private log: LoggerWithTarget) { }
 
@@ -28,7 +28,6 @@ export class FileSauceRulesService implements SauceRulesService {
       this.log.error('Could not parse config file', err)
     }
 
-
     return rules;
   }
 
@@ -41,7 +40,7 @@ export class FileSauceRulesService implements SauceRulesService {
       repo,
       branches: targetBranches,
       files: fileNamePattern,
-      rulePattern: new RegExp(data.rule),
+      rule: new RegExp(data.rule),
       comment: data.comment
     };
   }

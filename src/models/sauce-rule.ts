@@ -3,7 +3,7 @@ export interface SauceRule {
   owner: string,
   repo: string,
   files: RegExp[];
-  rulePattern: RegExp;
+  rule: RegExp;
   branches: RegExp[];
   comment: string;
 }
