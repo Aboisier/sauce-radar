@@ -33,9 +33,10 @@ export class SauceRadar {
           this.log(`Inspecting change: ${change.content}`);
 
           for (const rule of applicableRules) {
+            this.log(`Testing rule: ${rule.rule}`);
+            if (!rule.rule.test(change.content)) continue;
+            
             const matches = change.content.match(rule.rule);
-            if (matches == null) continue;
-
             let comment = rule.comment.slice();
             for (let i = 1; i < matches.length; ++i) {
               comment = comment.split(`{${i - 1}}`).join(matches[i]);

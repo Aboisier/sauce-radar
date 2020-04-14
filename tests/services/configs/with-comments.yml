@@ -1,0 +1,9 @@
+# Some rule
+- files: .*\.html
+  rule: someerror # yup
+  branches: 
+  - develop # some branch
+  comment: Hello {0}
+
+
+# Gotta love comments

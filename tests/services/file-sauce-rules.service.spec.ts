@@ -50,6 +50,31 @@ export class FilesSauceRulesServiceTests {
     this.expectRegex(rule.branches[0], 'develop');
   }
 
+  
+  @Test()
+  public async getRules_withComments_shouldTransformToSauceRule() {
+    // Arrange
+    this.configFilePath = __dirname + '/configs/with-comments.yml';
+
+    // Act
+    const rules = await this.rulesService.getRules('someowner', 'somerepo');
+
+    // Assert
+    expect.toBeEqual(rules.length, 1);
+
+    const rule = rules[0];
+    expect.toBeEqual(rule.owner, 'someowner');
+    expect.toBeEqual(rule.repo, 'somerepo');
+    expect.toBeEqual(rule.comment, 'Hello {0}')
+    this.expectRegex(rule.rule, 'testing someerror');
+    
+    expect.toBeEqual(rule.files.length, 1)
+    this.expectRegex(rule.files[0], 'lel.html');
+
+    expect.toBeEqual(rule.branches.length, 1)
+    this.expectRegex(rule.branches[0], 'develop');
+  }
+
   //#region Helpers
 
   private expectRegex(regex: RegExp, str: string) {
