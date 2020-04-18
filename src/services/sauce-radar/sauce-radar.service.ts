@@ -3,6 +3,7 @@ import { LoggerWithTarget } from 'probot/lib/wrap-logger';
 import { DiffParser } from '../diff-parser/diff-parser.service';
 import { CommentsCacheService, SauceInfo } from '../comments-cache/comments-cache.service';
 import { SauceRulesService } from '../rules/rules.service';
+import { SauceRule } from '../../models/sauce-rule';
 
 export class SauceRadar {
   constructor(
@@ -22,6 +23,8 @@ export class SauceRadar {
 
     const postComment = this.commentFunc(pr);
 
+    const rulesCounter = new Map<SauceRule, number>();
+
     for (const file of diff) {
       const applicableRules = rules.filter(x => x.files.some(y => y.test(file.newPath)));
       this.log(`Inspecting file ${file.newPath}, for which ${applicableRules.length} rules are applicable`);
@@ -34,8 +37,16 @@ export class SauceRadar {
 
           for (const rule of applicableRules) {
             this.log(`Testing rule: ${rule.rule}`);
-            if (!rule.rule.test(change.content)) continue;
+            rulesCounter.set(rule, (rulesCounter.get(rule) || 0) + 1);
             
+            if(rulesCounter.get(rule) > rule.threshold) {
+              this.log(`Rule ignored because it was applied too many times ${rulesCounter.get(rule)}/${rule.threshold}.`);
+            }
+
+            // Check if the rule applies
+            if (!rule.rule.test(change.content)) continue;
+
+
             const matches = change.content.match(rule.rule);
             let comment = rule.comment.slice();
             for (let i = 1; i < matches.length; ++i) {
@@ -51,7 +62,14 @@ export class SauceRadar {
   }
 
   private commentFunc(pr: PrInfo) {
+    let comments = 0;
+
     return async (comment: string, path: string, line: number) => {
+      if(++comments > 50) {
+        this.log(`Comment prevented because there were too many comments in this PR (#${pr.prNumber})`)
+        return;
+      } 
+
       const sauceInfo: SauceInfo = {
         comment,
         owner: pr.owner,

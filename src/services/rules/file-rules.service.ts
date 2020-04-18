@@ -41,7 +41,8 @@ export class FileRulesService implements SauceRulesService {
       branches: targetBranches,
       files: fileNamePattern,
       rule: new RegExp(data.rule),
-      comment: data.comment
+      comment: data.comment,
+      threshold: data.threshold || 10
     };
   }
 }

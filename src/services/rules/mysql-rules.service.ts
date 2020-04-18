@@ -32,7 +32,8 @@ export class MysqlRulesService implements SauceRulesService {
       branches: [new RegExp(data.targetBranches)],
       files: [new RegExp(data.fileNamePattern)],
       rule: new RegExp(data.rulePattern),
-      comment: data.comment
+      comment: data.comment,
+      threshold: data.threshold || 10
     };
   }
 

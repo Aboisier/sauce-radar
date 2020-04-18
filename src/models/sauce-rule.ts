@@ -6,4 +6,5 @@ export interface SauceRule {
   rule: RegExp;
   branches: RegExp[];
   comment: string;
+  threshold: number;
 }
