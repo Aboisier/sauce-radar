@@ -3,11 +3,11 @@
   "version": "1.0.1",
   "private": true,
   "description": "A bot that detects sauce.",
-  "author": "Antoine Boisier-Michaud <antoine.boisier-michaud@cactusoft.ca>",
+  "author": "Antoine Boisier-Michaud <aboisiermichaud@gmail.com>",
   "license": "ISC",
-  "repository": "https://github.com/cactusoft-ca/.git",
-  "homepage": "https://github.com/cactusoft-ca/",
-  "bugs": "https://github.com/cactusoft-ca//issues",
+  "repository": "https://github.com/Aboisier/sauce-radar",
+  "homepage": "http://pure-sea-01139.herokuapp.com/home",
+  "bugs": "https://github.com/Aboisier/sauce-radar/issues",
   "keywords": [
     "code-review",
     "github-bot"

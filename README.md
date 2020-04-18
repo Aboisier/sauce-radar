@@ -23,4 +23,4 @@ https://probot.github.io/docs/deployment/#deploy-the-app
 
 ## License
 
-[ISC](LICENSE) © 2020 Antoine Boisier-Michaud <antoine.boisier-michaud@cactusoft.ca>
+[ISC](LICENSE) © 2020 Antoine Boisier-Michaud <aboisiermichaud@gmail.com>
