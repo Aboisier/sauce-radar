@@ -1,13 +1,13 @@
-import { GitHubAPI } from 'probot';
 import { LoggerWithTarget } from 'probot/lib/wrap-logger';
 import { DiffParser } from '../diff-parser/diff-parser.service';
 import { CommentsCacheService, SauceInfo } from '../comments-cache/comments-cache.service';
 import { SauceRulesService } from '../rules/rules.service';
 import { SauceRule } from '../../models/sauce-rule';
+import {GitHubService} from '../github/github.service';
 
 export class SauceRadar {
   constructor(
-    private api: GitHubAPI,
+    private github: GitHubService,
     private diffParser: DiffParser,
     private sauceCache: CommentsCacheService,
     private sauceRulesService: SauceRulesService,
@@ -82,13 +82,13 @@ export class SauceRadar {
       if (await this.sauceCache.exists(sauceInfo)) return;
 
       this.log('Commenting...');
-      await this.api.pulls.createComment({
-        pull_number: pr.prNumber,
+      await this.github.comment({
+        prNumber: pr.prNumber,
         owner: pr.owner,
         repo: pr.repo,
         body: comment,
-        path,
-        commit_id: pr.commitId,
+        filePath: path,
+        commitId: pr.commitId,
         line
       });
 

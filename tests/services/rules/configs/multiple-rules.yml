@@ -1,0 +1,14 @@
+- files: 
+  - .*\.html
+  - .*\.xml 
+  rule: sometest
+  threshold: 5
+  branches: 
+  - develop
+  - master
+  comment: My first rule
+
+- files: .*
+  rule: .*
+  branches: .*
+  comment: SPAM!!!!!

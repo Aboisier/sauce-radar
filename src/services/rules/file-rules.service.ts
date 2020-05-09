@@ -1,24 +1,23 @@
-import { GitHubAPI } from 'probot';
 import { LoggerWithTarget } from 'probot/lib/wrap-logger';
 import { SauceRule } from '../../models/sauce-rule';
 import { SauceRulesService } from './rules.service';
-import { Base64 } from 'js-base64';
 import * as yaml from 'yaml';
+import { GitHubService } from '../github/github.service';
 
 export class FileRulesService implements SauceRulesService {
 
-  constructor(private api: GitHubAPI, private log: LoggerWithTarget) { }
+  constructor(private github: GitHubService, private log: LoggerWithTarget) { }
 
   public async getRules(owner: string, repo: string): Promise<SauceRule[]> {
-    const configFileResponse = await this.api.repos.getContents({
+    const file = await this.github.getFile(
       owner,
       repo,
-      path: '.github/sauceradar.yml'
-    }) as any;
+      '.github/sauceradar.yml'
+    );
 
     const rules: SauceRule[] = [];
     try {
-      const content = yaml.parse(Base64.decode(configFileResponse.data.content));
+      const content = yaml.parse(file);
       let id = 0;
       for (const key in content) {
         rules.push(this.toEntity(content[key], ++id, owner, repo))
