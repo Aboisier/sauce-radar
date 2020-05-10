@@ -3,6 +3,7 @@ import { DiffParser } from './services/diff-parser/diff-parser.service';
 import { FileRulesService } from './services/rules/file-rules.service';
 import { CommentsCacheService } from './services/comments-cache/comments-cache.service';
 import { SauceRadar } from './services/sauce-radar/sauce-radar.service';
+import { GitHubService } from './services/github/github.service';
 
 log('Just booting, hooking things up');
 
@@ -26,11 +27,11 @@ async function handlePr(context: Context) {
     mediaType: { format: "diff" }
   }) as any;
 
-
+  const githubService = new GitHubService(context.github);
   const diffParser = new DiffParser();
   const sauceCache = new CommentsCacheService(context.log);
-  const sauceRulesServices = new FileRulesService(context.github, context.log);
-  const sauceRadar = new SauceRadar(context.github, diffParser, sauceCache, sauceRulesServices, context.log);
+  const sauceRulesServices = new FileRulesService(githubService, context.log);
+  const sauceRadar = new SauceRadar(githubService, diffParser, sauceCache, sauceRulesServices, context.log);
   sauceRadar.detectSauce({
     prNumber: pr.number,
     owner: context.issue().owner,
