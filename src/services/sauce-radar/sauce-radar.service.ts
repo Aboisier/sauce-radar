@@ -28,7 +28,7 @@ export class SauceRadar {
       
       \`\`\`
       ${err}
-      \`\`\``, undefined, undefined)
+      \`\`\``);
       throw err;
     }
 
@@ -59,7 +59,6 @@ export class SauceRadar {
             // Check if the rule applies
             if (!rule.rule.test(change.content)) continue;
 
-
             const matches = change.content.match(rule.rule);
             let comment = rule.comment.slice();
             for (let i = 1; i < matches.length; ++i) {
@@ -77,7 +76,7 @@ export class SauceRadar {
   private commentFunc(pr: PrInfo) {
     let comments = 0;
 
-    return async (comment: string, path: string, line: number) => {
+    return async (comment: string, path?: string, line?: number) => {
       if (++comments > 50) {
         this.log(`Comment prevented because there were too many comments in this PR (#${pr.prNumber})`)
         return;

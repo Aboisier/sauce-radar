@@ -6,15 +6,23 @@ export class GitHubService {
   constructor(private api: GitHubAPI) { }
 
   public async comment(comment: Comment) {
-    await this.api.pulls.createComment({
+    const params = {
       pull_number: comment.prNumber,
       owner: comment.owner,
       repo: comment.repo,
       body: comment.body,
-      path: comment.filePath,
       commit_id: comment.commitId,
-      line: comment.line
-    });
+    } as any;
+
+    if (comment.filePath) {
+      params.path = comment.filePath;
+    }
+
+    if(comment.line) {
+      params.line = comment.line;
+    }
+
+    await this.api.pulls.createComment(params);
   }
 
   public async getFile(owner: string, repo: string, path: string): Promise<string> {

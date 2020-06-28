@@ -3,7 +3,7 @@ export interface Comment {
   owner: string;
   repo: string;
   body: string;
-  filePath: string;
+  filePath?: string;
   commitId: string;
-  line: number;
+  line?: number;
 }
