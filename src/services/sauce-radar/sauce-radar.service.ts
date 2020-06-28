@@ -3,7 +3,7 @@ import { DiffParser } from '../diff-parser/diff-parser.service';
 import { CommentsCacheService, SauceInfo } from '../comments-cache/comments-cache.service';
 import { SauceRulesService } from '../rules/rules.service';
 import { SauceRule } from '../../models/sauce-rule';
-import {GitHubService} from '../github/github.service';
+import { GitHubService } from '../github/github.service';
 
 export class SauceRadar {
   constructor(
@@ -16,12 +16,25 @@ export class SauceRadar {
 
   public async detectSauce(pr: PrInfo) {
     this.log('Detecting sauce...');
-    const rules = (await this.sauceRulesService.getRules(pr.owner, pr.repo)).filter(x => x.branches.some(y => y.test(pr.base)));
+    const postComment = this.commentFunc(pr);
+
+    let rules: SauceRule[];
+    try {
+      this.log('Getting rules...');
+      rules = (await this.sauceRulesService.getRules(pr.owner, pr.repo)).filter(x => x.branches.some(y => y.test(pr.base)));
+      this.log(`The config file has ${rules.length} rules applicable to ${pr.base}`);
+    } catch (err) {
+      postComment(`An error occured while reading the rules config file 😶
+      
+      \`\`\`
+      ${err}
+      \`\`\``, undefined, undefined)
+      throw err;
+    }
 
     const diff = this.diffParser.parse(pr.diff);
     this.log(`The diff has ${diff.length} files in it!`);
 
-    const postComment = this.commentFunc(pr);
 
     const rulesCounter = new Map<SauceRule, number>();
 
@@ -38,8 +51,8 @@ export class SauceRadar {
           for (const rule of applicableRules) {
             this.log(`Testing rule: ${rule.rule}`);
             rulesCounter.set(rule, (rulesCounter.get(rule) || 0) + 1);
-            
-            if(rulesCounter.get(rule) > rule.threshold) {
+
+            if (rulesCounter.get(rule) > rule.threshold) {
               this.log(`Rule ignored because it was applied too many times ${rulesCounter.get(rule)}/${rule.threshold}.`);
             }
 
@@ -65,10 +78,10 @@ export class SauceRadar {
     let comments = 0;
 
     return async (comment: string, path: string, line: number) => {
-      if(++comments > 50) {
+      if (++comments > 50) {
         this.log(`Comment prevented because there were too many comments in this PR (#${pr.prNumber})`)
         return;
-      } 
+      }
 
       const sauceInfo: SauceInfo = {
         comment,
