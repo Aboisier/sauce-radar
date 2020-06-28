@@ -26,9 +26,7 @@ export class SauceRadar {
     } catch (err) {
       postComment(`An error occured while reading the rules config file 😶
       
-      \`\`\`
-      ${err}
-      \`\`\``);
+      ${err}`);
       throw err;
     }
 
