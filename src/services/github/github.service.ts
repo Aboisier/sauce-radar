@@ -6,23 +6,26 @@ export class GitHubService {
   constructor(private api: GitHubAPI) { }
 
   public async comment(comment: Comment) {
-    const params = {
-      pull_number: comment.prNumber,
-      owner: comment.owner,
-      repo: comment.repo,
-      body: comment.body,
-      commit_id: comment.commitId,
-    } as any;
-
-    if (comment.filePath) {
-      params.path = comment.filePath;
+    if (!comment.filePath) {
+      await this.api.pulls.createReview({
+        pull_number: comment.prNumber,
+        owner: comment.owner,
+        repo: comment.repo,
+        body: comment.body,
+        event: 'COMMENT'
+      });
     }
-
-    if(comment.line) {
-      params.line = comment.line;
+    else {
+      await this.api.pulls.createComment({
+        pull_number: comment.prNumber,
+        owner: comment.owner,
+        repo: comment.repo,
+        body: comment.body,
+        commit_id: comment.commitId,
+        path: comment.filePath,
+        line: comment.line
+      });
     }
-
-    await this.api.pulls.createComment(params);
   }
 
   public async getFile(owner: string, repo: string, path: string): Promise<string> {
