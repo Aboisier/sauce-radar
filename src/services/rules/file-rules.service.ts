@@ -25,6 +25,7 @@ export class FileRulesService implements SauceRulesService {
       this.log(`Found ${rules.length} keys in .github/sauce-radar.json for ${owner}/${repo}.`);
     } catch (err) {
       this.log.error('Could not parse config file', err)
+      throw err;
     }
 
     return rules;
