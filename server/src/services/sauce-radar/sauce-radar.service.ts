@@ -52,6 +52,7 @@ export class SauceRadar {
 
             if (rulesCounter.get(rule) > rule.threshold) {
               this.log(`Rule ignored because it was applied too many times ${rulesCounter.get(rule)}/${rule.threshold}.`);
+              continue;
             }
 
             // Check if the rule applies
